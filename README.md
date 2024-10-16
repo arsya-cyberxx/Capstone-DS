@@ -13,3 +13,4 @@ probability of weather SpaceX will reuse their stage 1 rocket or not applied Dat
 4. EDA SQL
 5. EDA Data Visualisation
 6. Predictive Analyst
+7. [See PDF Presentation](Capstone Presentation.pdf)
