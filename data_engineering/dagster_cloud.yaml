@@ -1,0 +1,5 @@
+locations:
+  - location_name: data_engineering
+    code_source:
+      package_name: data_engineering
+    working_directory: ./data_engineering

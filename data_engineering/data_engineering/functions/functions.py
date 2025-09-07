@@ -2,6 +2,7 @@
 This module is do data ingestion from SpaceX API and create a dataset for part 1 of the project.
 """
 import datetime
+import time
 
 from pandas import DataFrame, json_normalize, to_datetime
 import requests
@@ -30,11 +31,8 @@ class SpaceXAPI:
         """
         Creates a new dataframe by making API requests to get the booster version, launch site, payload data, and core data from the rocket and core IDs in the dataframe.
 
-        Args:
-            data (DataFrame): The dataframe containing the rocket and core IDs.
-
-        Returns:
-            DataFrame: The new dataframe with the additional information from the API requests.
+        : params data (DataFrame): The dataframe containing the rocket and core IDs.
+        : return DataFrame: The new dataframe with the additional information from the API requests.
         """
         self.getBoosterVersion(data)
         self.getLaunchSite(data)
@@ -65,15 +63,15 @@ class SpaceXAPI:
         """
         Makes an API request to get the booster version from the rocket IDs in the dataframe.
 
-        Args:
-            data (DataFrame): The dataframe containing the rocket IDs.
-
-        Returns:
-            None
+        :param data (DataFrame): The dataframe containing the rocket IDs.
+        :return None
         """
         print("Getting Booster Version Data...")
+        a = 1
         for x in data['rocket']:
             if x:
+                print("iteration", a)
+                a+=1
                 response = requests.get("https://api.spacexdata.com/v4/rockets/"+str(x)).json()
                 self.boosterversion.append(response['name'])
 
@@ -81,11 +79,8 @@ class SpaceXAPI:
         """
         Makes an API request to get the launch site data from the launchpad IDs in the dataframe.
 
-        Args:
-            data (DataFrame): The dataframe containing the launchpad IDs.
-
-        Returns:
-            None
+        :param data (DataFrame): The dataframe containing the launchpad IDs.
+        :return None
         """
         print("Getting Launch Site Data...")
         for x in data['launchpad']:
@@ -99,11 +94,8 @@ class SpaceXAPI:
         """
         Makes an API request to get the payload mass and orbit data from the payload IDs in the dataframe.
 
-        Args:
-            data (DataFrame): The dataframe containing the payload IDs.
-
-        Returns:
-            None
+        :param data (DataFrame): The dataframe containing the payload IDs.
+        :return None
         """
         print("Getting Payload Data...")
         for load in data['payloads']:
@@ -117,11 +109,8 @@ class SpaceXAPI:
         """
         Makes an API request to get the core data from the core IDs in the dataframe.
 
-        Args:
-            data (DataFrame): The dataframe containing the core IDs.
-
-        Returns:
-            None
+        :param data (DataFrame): The dataframe containing the core IDs.
+        :return None
         """
         print("Getting Core Data...")
         for core in data['cores']:
@@ -145,11 +134,8 @@ def api_data(spacex_url: str) -> DataFrame:
     """
     Gets the data from the SpaceX API and filters it to only include the rocket, payloads, launchpad, cores, flight number, and date of the launches.
 
-    Args:
-        spacex_url (str): The URL of the SpaceX API.
-
-    Returns:
-        DataFrame: The filtered dataframe containing the relevant data.
+    :param spacex_url (str): The URL of the SpaceX API.
+    :return DataFrame: The filtered dataframe containing the relevant data.
     """
     response = requests.get(spacex_url)
     data= json_normalize(response.json())
@@ -172,20 +158,15 @@ def api_data(spacex_url: str) -> DataFrame:
     data = data[data['date'] <= datetime.date(2020, 11, 13)]
     return data
 
-def get_data(spacex_url: str) -> None:
+def get_data(spacex_url: str) -> DataFrame:
     """
     Gets the data from the SpaceX API and filters it to only include the rocket, payloads, launchpad, cores, flight number, and date of the launches.
     Then, it creates a dataset for part 1 of the project, which includes Falcon 9 launches only, and saves it to a csv file.
-    
-    Parameters
-    ----------
-    spacex_url : str
-        The URL of the SpaceX API.
 
-    Returns
-    -------
-    None
+    :param spacex_url (str): The URL of the SpaceX API.
+    :return None
     """
+    start = time.time()
     data = api_data(spacex_url)
 
     api = SpaceXAPI()
@@ -196,8 +177,10 @@ def get_data(spacex_url: str) -> None:
     data_falcon9.loc[:,'FlightNumber'] = list(range(1, data_falcon9.shape[0]+1))
 
     # Calculate the mean value of PayloadMass column
-    mean=df['PayloadMass'].mean()
+    mean=data_falcon9['PayloadMass'].mean()
 
     # Replace the np.nan values with its mean value
-    df['PayloadMass'].replace(np.nan, mean, inplace=True)
-    data_falcon9.to_csv(r'src\data\dataset_part_1.csv', index=False)
+    data_falcon9['PayloadMass'] = data_falcon9['PayloadMass'].replace(np.nan, mean)
+    print("time taken for api: ", time.time() - start)
+    return data_falcon9
+    

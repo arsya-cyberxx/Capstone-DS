@@ -1,5 +1,13 @@
 #venv
 .venv
 
-# data
-src/data/*
+# env
+.env
+
+# DAGSTER_HOME
+data_engineering/DAGSTER_HOME/*
+!data_engineering/DAGSTER_HOME/.gitkeep
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
