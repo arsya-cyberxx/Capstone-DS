@@ -1,0 +1,48 @@
+# Here you can define all your datasets by using simple YAML syntax.
+#
+# Documentation for this file format can be found in "The Data Catalog"
+# Link: https://docs.kedro.org/en/stable/data/data_catalog.html
+
+raw_falcon9_data:
+  type: pickle.PickleDataset
+  filepath: data/01_raw/raw_falcon9_data.pkl
+
+labeled_data:
+  type: pickle.PickleDataset
+  filepath: data/03_primary/labeled_data.pkl
+
+feature_engineered_data:
+  type: pickle.PickleDataset
+  filepath: data/04_feature/feature_engineered_data.pkl
+
+X_train:
+  type: pickle.PickleDataset
+  filepath: data/05_model_input/X_train.pkl
+
+X_test:
+  type: pickle.PickleDataset
+  filepath: data/05_model_input/X_test.pkl
+
+Y_train:
+  type: pickle.PickleDataset
+  filepath: data/05_model_input/Y_train.pkl
+
+Y_test:
+  type: pickle.PickleDataset
+  filepath: data/05_model_input/Y_test.pkl
+
+LR_model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/LR_model.json
+
+DT_model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/DT_model.json
+
+SVM_model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/SVM_model.json
+
+KNN_model:
+  type: pickle.PickleDataset
+  filepath: data/06_models/KNN_model.json
